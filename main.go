@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/awiz911/clientlist"
+	"Learning/ClientList/muxes"
 	"database/sql"
 	"fmt"
 	"log"
@@ -11,13 +11,13 @@ import (
 
 func main() {
 
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable", dbconfig.dbUser, dbconfig.dbPass, dbconfig.dbName, dbconfig.port)
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable", cfg.dbUser, cfg.dbPass, cfg.dbName, cfg.port)
 
 	db, err := sql.Open("postgres", dbinfo)
 
 	checkErr(err)
 
-	log.Printf("Postgres started at %s PORT", dbconfig.port)
+	log.Printf("Postgres started at %s PORT", cfg.port)
 
 	defer db.Close()
 

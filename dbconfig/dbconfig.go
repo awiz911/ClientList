@@ -1,8 +1,12 @@
 package dbconfig
 
 const (
-	dbUser = "docker"
-	dbPass = "docker"
-	dbName = "docker"
-	port   = "32300"
+	//DbUser - User for PG connection
+	DbUser = "docker"
+	//DbPass - Pass for PG connection
+	DbPass = "docker"
+	//DbName - PG base name
+	DbName = "docker"
+	//Port - port for connection to PG
+	Port = "32300"
 )
