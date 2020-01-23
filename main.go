@@ -1,7 +1,7 @@
 package main
 
 import (
-	""github.com/awiz911/clientlist"
+	"github.com/awiz911/clientlist"
 	"database/sql"
 	"fmt"
 	"log"
