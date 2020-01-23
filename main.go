@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Learning/ClientList/muxes"
+	""github.com/awiz911/clientlist"
 	"database/sql"
 	"fmt"
 	"log"
