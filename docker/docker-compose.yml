@@ -1,9 +1,10 @@
 version: '3'
 services:
-
   postgres:
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile-Postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: docker
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
     ports:
       - "32300:5432"
