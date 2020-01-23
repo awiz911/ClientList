@@ -11,13 +11,13 @@ import (
 
 func main() {
 
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable", config.dbUser, config.dbPass, config.dbName, config.port)
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable", dbconfig.dbUser, dbconfig.dbPass, dbconfig.dbName, dbconfig.port)
 
 	db, err := sql.Open("postgres", dbinfo)
 
 	checkErr(err)
 
-	log.Printf("Postgres started at %s PORT", config.port)
+	log.Printf("Postgres started at %s PORT", dbconfig.port)
 
 	defer db.Close()
 
