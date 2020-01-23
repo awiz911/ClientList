@@ -1,4 +1,4 @@
-package config
+package dbconfig
 
 const (
 	dbUser = "docker"

@@ -1,13 +1,12 @@
 package main
 
 import (
+	"Learning/ClientList/muxes"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/awiz911/contacts-learning/clients/muxes"
 )
 
 func main() {
