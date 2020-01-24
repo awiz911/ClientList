@@ -72,6 +72,8 @@ func SERVE(db *sql.DB) *http.ServeMux {
 
 				log.Printf("New Client %s %s added successfully.", newClient.Name, newClient.Lastname)
 
+				newClient.ID = lastInsertID
+
 				json.NewEncoder(w).Encode(newClient)
 
 				return
@@ -89,22 +91,36 @@ func SERVE(db *sql.DB) *http.ServeMux {
 			panic(err)
 		}
 
-		okStatus(w)
+		rows, err := db.Query("SELECT * FROM clients where id=$1", id)
+
+		checkErr(err)
+
+		if !rows.Next() {
+			w.Header().Set("Content-Type", "text/json; charset=utf-8")
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 
 		if method == "GET" {
 
-			rows, err := db.Query("SELECT * FROM clients where id=$1", id)
+			//rows, err := db.Query("SELECT * FROM clients where id=$1", id)
 
-			checkErr(err)
+			//checkErr(err)
 
 			client := Client{}
 
-			for rows.Next() {
-				err = rows.Scan(&client.ID, &client.Name, &client.Lastname, &client.Age, &client.Cell, &client.Email)
-				checkErr(err)
-			}
+			err = rows.Scan(&client.ID, &client.Name, &client.Lastname, &client.Age, &client.Cell, &client.Email)
+
+			checkErr(err)
+
+			//for rows.Next() {
+			//	err = rows.Scan(&client.ID, &client.Name, &client.Lastname, &client.Age, &client.Cell, &client.Email)
+			//	checkErr(err)
+			//}
 
 			log.Printf("Client with id = %d listed successfully.", id)
+
+			okStatus(w)
 
 			json.NewEncoder(w).Encode(client)
 
@@ -124,7 +140,9 @@ func SERVE(db *sql.DB) *http.ServeMux {
 
 			log.Printf("Client with id = %d deleted successfully.", id)
 
-			json.NewEncoder(w).Encode(nil)
+			okStatus(w)
+
+			//json.NewEncoder(w).Encode(nil)
 
 			return
 		}
@@ -142,6 +160,10 @@ func SERVE(db *sql.DB) *http.ServeMux {
 			checkErr(err)
 
 			log.Printf("Client with id = %d updated successfully.", id)
+
+			okStatus(w)
+
+			client.ID = id
 
 			json.NewEncoder(w).Encode(client)
 
