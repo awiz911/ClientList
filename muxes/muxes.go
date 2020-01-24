@@ -33,7 +33,7 @@ func SERVE(db *sql.DB) *http.ServeMux {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/newUser", func(w http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/newClient", func(w http.ResponseWriter, req *http.Request) {
 
 		if req.Method != "POST" {
 			http.NotFound(w, req)
@@ -43,7 +43,7 @@ func SERVE(db *sql.DB) *http.ServeMux {
 		var newClient = convertRequestToClient(req)
 		var lastInsertID int
 
-		err := db.QueryRow("INSERT INTO users(name, lastname, age, cell, email) VALUES($1, $2, $3, $4, $5) returning id;",
+		err := db.QueryRow("INSERT INTO clients(name, lastname, age, cell, email) VALUES($1, $2, $3, $4, $5) returning id;",
 			newClient.Name, newClient.Lastname, newClient.Age, newClient.Cell, newClient.Email).Scan(&lastInsertID)
 
 		checkErr(err)
