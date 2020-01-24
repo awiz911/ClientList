@@ -29,62 +29,61 @@ type Clients = []Client
 //SERVE - made to serve
 func SERVE(db *sql.DB) *http.ServeMux {
 
-	log.Print("Server started at http://127.0.0.1:3000 port.")
+	log.Print("Server started at http://127.0.0.1:3000 port")
 
 	mux := http.NewServeMux()
-
-	mux.HandleFunc("/newClient", func(w http.ResponseWriter, req *http.Request) {
-
-		if req.Method != "POST" {
-			http.NotFound(w, req)
-			return
-		}
-
-		var newClient = convertRequestToClient(req)
-		var lastInsertID int
-
-		err := db.QueryRow("INSERT INTO clients(name, lastname, age, cell, email) VALUES($1, $2, $3, $4, $5) returning id;",
-			newClient.Name, newClient.Lastname, newClient.Age, newClient.Cell, newClient.Email).Scan(&lastInsertID)
-
-		checkErr(err)
-
-		fmt.Println("last inserted id =", lastInsertID)
-
-		okStatus(w)
-
-		log.Printf("New Client %s %s added successfully.", newClient.Name, newClient.Lastname)
-
-		json.NewEncoder(w).Encode(newClient)
-
-		return
-	})
-
-	mux.HandleFunc("/getAll", func(w http.ResponseWriter, req *http.Request) {
-
-		if req.Method != "GET" {
-			http.NotFound(w, req)
-			return
-		}
-
-		okStatus(w)
-
-		json.NewEncoder(w).Encode(getAllClients(db))
-
-		log.Printf("All clients listed successfully.")
-
-		return
-	})
 
 	mux.HandleFunc("/clients/", func(w http.ResponseWriter, req *http.Request) {
 
 		var method = req.Method
 
-		if method != "GET" && method != "DELETE" && method != "PUT" {
+		if method != "GET" && method != "DELETE" && method != "PUT" && method != "POST" {
+			http.NotFound(w, req)
+			return
+		}
+
+		if strings.TrimPrefix(req.URL.Path, "/clients/") == "" {
+
+			if method == "GET" {
+
+				okStatus(w)
+
+				json.NewEncoder(w).Encode(getAllClients(db))
+
+				log.Printf("All clients listed successfully.")
+
+				return
+
+			}
+
+			if method == "POST" {
+
+				var newClient = convertRequestToClient(req)
+				var lastInsertID int
+
+				err := db.QueryRow("INSERT INTO clients(name, lastname, age, cell, email) VALUES($1, $2, $3, $4, $5) returning id;",
+					newClient.Name, newClient.Lastname, newClient.Age, newClient.Cell, newClient.Email).Scan(&lastInsertID)
+
+				checkErr(err)
+
+				fmt.Println("last inserted id =", lastInsertID)
+
+				okStatus(w)
+
+				log.Printf("New Client %s %s added successfully.", newClient.Name, newClient.Lastname)
+
+				json.NewEncoder(w).Encode(newClient)
+
+				return
+			}
+
 			http.NotFound(w, req)
 			return
 		}
 
 		id, err := strconv.Atoi(strings.TrimPrefix(req.URL.Path, "/clients/"))
+
+		log.Printf("id = %d", id)
 
 		if err != nil {
 			panic(err)
